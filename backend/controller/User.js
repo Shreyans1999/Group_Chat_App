@@ -1,22 +1,25 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-exports.register = (req, res, next) => {
+exports.register = async (req, res, next) => {
   const name = req.body.name;
-  const email = req.body.email;
+  const mail = req.body.email;
   const password = req.body.password;
   const phone = req.body.phone;
-  bcrypt.hash(password, 10, async (err, hash) => {
-    console.log(err);
-    await User.create({
-      name: name,
-      email: email,
-      password: hash,
-      number: phone,
-    })
-      .then((data) => {
-        //console.log(data);
-        res.status(200).json({ User: data });
-      })
-      .catch((err) => console.log(err));
-  });
+
+  const AlreadyExists = await User.findOne({ where: { email: mail } });
+  if (AlreadyExists) {
+    console.log("user Exists")
+    res.status(500).json({ message: "User Already Exists" });
+  } else {
+   await bcrypt.hash(password, 10, async (err, hash) => {
+      console.log(err);
+      await User.create({
+        name: name,
+        email: mail,
+        password: hash,
+        number: phone,
+      });
+      res.status(200).json({message:"User Signed Up Successfully"});
+    });
+  }
 };

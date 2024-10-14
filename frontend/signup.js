@@ -16,11 +16,13 @@ submitBtn.addEventListener("click", function (event) {
     axios
       .post("http://localhost:4000/register-user", RegisterUser)
       .then((response) => {
-        console.log(response);
-        alert("Signup Successfull");
-        window.location.href = "../login/login.html";
+        console.log(response)
+            alert("Signup Successfull");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        alert("User Already Exists")
+      });
   } else {
     alert("Fill all detail");
   }
