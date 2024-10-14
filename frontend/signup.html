@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+        <form class="text-gray-800" id="signup-form">
+            <h2 class="text-3xl font-semibold mb-6 text-center">Create an Account</h2>
+            <div class="mb-4">
+                <label for="name" class="block mb-1">Your Name:</label>
+                <input type="text" id="name" placeholder="Enter your name" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block mb-1">Your Email:</label>
+                <input type="email" id="email" placeholder="Enter your email" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="phone" class="block mb-1">Phone Number:</label>
+                <input type="tel" id="phone" placeholder="Enter your phone number" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block mb-1">Your Password:</label>
+                <input type="password" id="password" placeholder="Enter your password" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <button class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none w-full" id="submit" type="submit">Sign Up</button>
+            <p class="mt-4 text-center text-sm">Already have an account? <a href="../login/login.html" class="text-blue-500 hover:text-blue-600">Login Here</a></p>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
