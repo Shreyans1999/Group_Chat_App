@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-80">
+        <form class="text-gray-800">
+            <h2 class="text-2xl font-semibold mb-6">Welcome!</h2>
+            <div class="mb-4">
+                <label for="email" class="block mb-1">Enter your Email:</label>
+                <input type="email" id="email" placeholder="Enter your email" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block mb-1">Enter your Password:</label>
+                <input type="password" id="password" placeholder="Enter your password" class="w-full bg-gray-200 border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none" id="submit" type="submit">Login</button>
+            <button class="bg-gray-500 text-white py-2 px-4 rounded mt-2 hover:bg-gray-600 focus:outline-none" id="forgot-password">Forgot Password</button>
+            <p class="mt-4 text-sm">New user? <a href="../signup/index.html" class="text-blue-400 hover:text-blue-300">Sign Up Here</a></p>
+        </form>
+    </div>
+
+    <script src="login.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>
