@@ -10,13 +10,13 @@ SubmitBtn.addEventListener("click", function (event) {
   };
 
   axios
-    .post(`http://localhost:3000/login-user/${login.email}`, login)
+    .post(`http://localhost:4000/login-user/${login.email}`, login)
     .then((response) => {
       console.log(response);
       if(response.status == 201) {
         alert("User Loggedin");
         localStorage.setItem("token", response.data.token);
-        window.location.href = "../main/main.html";
+       //window.location.href = "../main/main.html";
       }
     })
     .catch((err) => {
