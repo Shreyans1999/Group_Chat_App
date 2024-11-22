@@ -24,7 +24,9 @@ const User = sq.define("User", {
    number:{
     type:Sequelize.STRING,
     allowNull:false
-   }
+   },
+
+   
   });
   
   module.exports = User;

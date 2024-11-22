@@ -17,7 +17,7 @@ SubmitBtn.addEventListener("click", function (event) {
         alert("User Loggedin");
         localStorage.setItem("token", response.data.token);
        // window.location.href="frontend\Main\main.html"
-        window.location.href = "../Main/main.html";
+       window.location.href = "../Main/main.html";
       }
     })
     .catch((err) => {

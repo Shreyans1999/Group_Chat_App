@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Group</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex justify-center items-center m-4">
+        <div class="w-full max-w-md flex flex-col justify-center items-center bg-white p-6 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold my-3 flex justify-center">Create Group</h1>
+            <!-- Input Field for Group Name -->
+            <div class="w-full mt-4">
+                <input type="text" id="groupName" placeholder="Enter group name" class="w-full bg-gray-200 rounded-lg px-4 py-2 focus:outline-none">
+            </div>
+            <!-- Create Button -->
+            <div class="flex w-full justify-center mt-4">
+                <button id="CreateGroup" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Create</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="entry.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</html>

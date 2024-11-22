@@ -9,21 +9,42 @@
 </head>
 
 <body class="bg-gray-100">
-    <div class="flex justify-center items-center m-4">
-        <div class="w-full flex flex-col justify-center items-center">
-            <h1 class="text-2xl font-bold my-3 flex justify-center">Chat App</h1>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg p-4 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-bold">Chat App</h1>
+            <ul id="groupList" class="flex space-x-4">
+            </ul>
+        </div>
+        <div class="flex space-x-4">
+            <button id="InviteUser" class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 focus:outline-none">Invite User</button>
+            <button id="CreateGroup" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Create Group</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-4">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <!-- Group Name Div -->
+            <div id="groupName" class="mb-4 p-2 bg-blue-100 text-blue-700 rounded-lg shadow-inner">
+                <!-- Selected Group Name will be displayed here -->
+            </div>
             <!-- User Div -->
-            <div id="user"></div>
+            <div id="user" class="mb-4"></div>
             <!-- Message Div -->
-            <div id="message"></div>
+            <div id="message" class="relative mb-4 h-64 overflow-y-auto">
+                <!-- Messages will be appended here -->
+            </div>
+
             <!-- Input Field and Button -->
-            <div class="flex w-full justify-between mt-4">
-                <input type="text" id="messageContent" placeholder="Type your message..." class="bg-gray-200 rounded-lg px-4 py-2 focus:outline-none">
-                <button id="Send" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Send Message</button>
+            <div class="flex">
+                <input type="text" id="messageContent" placeholder="Type your message..." class="flex-grow bg-gray-200 rounded-lg px-4 py-2 focus:outline-none">
+                <button id="Send" class="bg-blue-500 text-white px-4 py-2 ml-2 rounded hover:bg-blue-600 focus:outline-none">Send Message</button>
             </div>
         </div>
     </div>
+    <script src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
-<script src="main.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </html>
