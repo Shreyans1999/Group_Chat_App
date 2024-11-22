@@ -12,27 +12,18 @@
     <div class="flex justify-center items-center m-4">
         <div class="w-full flex flex-col justify-center items-center">
             <h1 class="text-2xl font-bold my-3 flex justify-center">Chat App</h1>
-            <div class="bg-gray-200 w-1/2 p-1 m-1">
-                <p class="text-gray-800">You Joined</p>
-            </div>
-            <div class="bg-white w-1/2 p-1 m-1">
-                <p class="text-gray-800">Vaibhav Joined</p>
-            </div>
-            <div class="bg-gray-200 w-1/2 p-1 m-1">
-                <p class="text-gray-800">Vaibhav: Hello</p>
-            </div>
-            <div class="bg-white w-1/2 p-1 m-1">
-                <p class="text-gray-800">You: Hello!</p>
-            </div>
-            <div class="bg-gray-200 w-1/2 p-1 m-1">
-                <p class="text-gray-800">Vaibhav: Kya haal?</p>
-            </div>
+            <!-- User Div -->
+            <div id="user"></div>
+            <!-- Message Div -->
+            <div id="message"></div>
+            <!-- Input Field and Button -->
             <div class="flex w-full justify-between mt-4">
-                <input type="text" placeholder="Type your message..." class="bg-gray-200 rounded-lg px-4 py-2 focus:outline-none">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Send Message</button>
+                <input type="text" id="messageContent" placeholder="Type your message..." class="bg-gray-200 rounded-lg px-4 py-2 focus:outline-none">
+                <button id="Send" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Send Message</button>
             </div>
         </div>
     </div>
 </body>
-
+<script src="main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha512-3BBFWr73Xrf8GRjO+0pl0cbVwESBvg3ovnuCXpoqOkC/mkt/hTkFtutUPrwRz8eLySYvy5v1daulkyUZYvH8jw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </html>

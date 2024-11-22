@@ -16,7 +16,8 @@ SubmitBtn.addEventListener("click", function (event) {
       if(response.status == 201) {
         alert("User Loggedin");
         localStorage.setItem("token", response.data.token);
-        window.location.href = "../main/main.html";
+       // window.location.href="frontend\Main\main.html"
+        window.location.href = "../Main/main.html";
       }
     })
     .catch((err) => {
