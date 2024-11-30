@@ -49,119 +49,120 @@ function showMembers(peeps) {
   });
 }
 
+// Initialize socket connection
+let socket;
+try {
+  socket = io('http://localhost:4000');
+} catch (error) {
+  console.error('Socket connection failed:', error);
+}
+
+// Socket event handlers
+socket.on('connect', () => {
+  console.log('Connected to socket server');
+});
+
+socket.on('error', (error) => {
+  console.error('Socket error:', error);
+});
+
+socket.on('disconnect', () => {
+  console.log('Disconnected from socket server');
+});
+
+// Replace the setInterval block with socket listeners
 window.addEventListener("DOMContentLoaded", function () {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
-  console.log(decodedToken);
+  const groupId = localStorage.getItem("Gid");
 
-  axios
-    .get("http://localhost:4000/showMembers", {
-      headers: { Authorisation: token },
-    })
-    .then((Response) => {
-      console.log(Response);
-      if (decodedToken.admin) {
-        for (var i = 0; i < Response.data.peopeles.length; i++) {
-          showMembers(Response.data.peopeles[i]);
-        }
-      }
-    });
-
-  // Retrieve and display the group name from local storage
-  const groupName = localStorage.getItem("GroupName");
-  if (groupName) {
-    ShowGroupName(groupName);
+  // Join the group's socket room
+  if (groupId) {
+    socket.emit('join-group', groupId);
   }
 
-  setInterval(() => {
-    const groupId = localStorage.getItem("Gid");
+  // Listen for new messages
+  socket.on('receive-message', (message) => {
+    ShowMessages(message);
+  });
 
-    axios
-      .get(`http://localhost:4000/get-message?groupId=${groupId}`, {
-        headers: {
-          Authorisation: token,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        const messages = response.data.messages;
-
-        if (messages.length > 0) {
-          ShowGroupName(messages[0].Group.name);
-          let MessageArr1 = [];
-          const MessageDiv = document.getElementById("message");
-          MessageDiv.textContent = "";
-
-          messages.forEach((message) => {
-            MessageArr1.push(message);
-          });
-
-          // Limit messages to the last 10
-          if (MessageArr1.length > 10) {
-            MessageArr1 = MessageArr1.slice(-10);
-          }
-
-          localStorage.setItem("Messages", JSON.stringify(MessageArr1));
-
-          MessageArr1.forEach((msg) => {
-            ShowMessages(msg);
-          });
-        } else {
-          const MessageDiv = document.getElementById("message");
-          MessageDiv.innerHTML = "<h1>Start Chatting</h1>";
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    axios
-      .get("http://localhost:4000/getGroupList", {
-        headers: {
-          Authorisation: token,
-        },
-      })
-      .then((response2) => {
-        console.log(response2);
-        const Grouplist = document.getElementById("groupList");
-        const TempList = document.createElement("div");
-        TempList.innerHTML = "";
-        response2.data.name.forEach((group) => {
-          TempList.innerHTML += `<li><button onClick="handleGrpNameClick(this.id, '${group.name}')" id="${group.id}"> ${group.name}</button> </li>`;
+  // Initial message load
+  axios.get(`http://localhost:4000/get-message?groupId=${groupId}`, {
+    headers: {
+      Authorisation: token,
+    },
+  })
+  .then((response) => {
+    const messages = response.data.messages;
+    messages.forEach(message => {
+      if (message.User && message.User.name) {
+        ShowMessages({
+          content: message.content,
+          User: { name: message.User.name }
         });
+      }
+    });
+  });
 
-        if (Grouplist.innerHTML !== TempList.innerHTML) {
-          Grouplist.innerHTML = TempList.innerHTML;
-        }
-      });
-  }, 1000);
+  // Update group list periodically (can be optimized further)
+  getGroupList();
 });
 
+// Update the SendButton click handler
 SendButton.addEventListener("click", function () {
   const token = localStorage.getItem("token");
   const MessageContent = document.getElementById("messageContent").value;
   const groupId = localStorage.getItem("Gid");
+
   const Text = {
     Message: MessageContent,
-    groupId: groupId, // Make sure to send the groupId with the message
+    groupId: groupId,
   };
-  axios
-    .post("http://localhost:4000/add-message", Text, {
-      headers: { Authorisation: token },
-    })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
+  // Emit the message through socket
+  socket.emit('send-message', {
+    content: MessageContent,
+    User: { 
+      name: localStorage.getItem("username")
+    },
+    groupId: groupId
+  });
+
+  axios.post("http://localhost:4000/add-message", Text, {
+    headers: { Authorisation: token },
+  });
+
+  // Clear input field
+  document.getElementById("messageContent").value = '';
 });
 
+// Handle group changes
+function handleGrpNameClick(id, groupName) {
+  // Leave previous group
+  const oldGroupId = localStorage.getItem("Gid");
+  if (oldGroupId) {
+    socket.emit('leave-group', oldGroupId);
+  }
+
+  localStorage.removeItem("Messages");
+  localStorage.setItem("Gid", id);
+  
+  // Join new group
+  socket.emit('join-group', id);
+  ShowGroupName(groupName);
+}
+
 function ShowMessages(message) {
+  if (!message.User || !message.User.name || !message.content) return;
+  
   const MessageDiv = document.getElementById("message");
   const Li = document.createElement("li");
-  Li.textContent = `${message.User.name} : ${message.content}`;
+  Li.classList.add("mb-2", "p-2", "bg-gray-50", "rounded");
+  Li.textContent = `${message.User.name}: ${message.content}`;
   MessageDiv.appendChild(Li);
+  
+  // Auto-scroll to the latest message
+  MessageDiv.scrollTop = MessageDiv.scrollHeight;
 }
 
 const CreateGroup = document.getElementById("CreateGroup");
@@ -175,12 +176,6 @@ function ShowGroupName(Group) {
   GName.textContent = `${Group}`;
   // Store the group name in local storage
   localStorage.setItem("GroupName", Group);
-}
-
-function handleGrpNameClick(id, groupName) {
-  localStorage.removeItem("Messages");
-  localStorage.setItem("Gid", id);
-  ShowGroupName(groupName); // Call ShowGroupName immediately after setting the group ID
 }
 
 const Invite = document.getElementById("InviteUser");
@@ -203,4 +198,24 @@ function parseJwt(token) {
   );
 
   return JSON.parse(jsonPayload);
+}
+
+function getGroupList() {
+  const token = localStorage.getItem("token");
+  axios.get("http://localhost:4000/getGroupList", {
+    headers: { Authorisation: token },
+  })
+  .then((response) => {
+    const Grouplist = document.getElementById("groupList");
+    const TempList = document.createElement("div");
+    TempList.innerHTML = "";
+    response.data.name.forEach((group) => {
+      TempList.innerHTML += `<li><button onClick="handleGrpNameClick('${group.id}', '${group.name}')" id="${group.id}"> ${group.name}</button> </li>`;
+    });
+
+    if (Grouplist.innerHTML !== TempList.innerHTML) {
+      Grouplist.innerHTML = TempList.innerHTML;
+    }
+  })
+  .catch(err => console.log(err));
 }

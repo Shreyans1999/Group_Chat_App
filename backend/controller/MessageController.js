@@ -6,18 +6,27 @@ const sq = require("sequelize");
 const Sequelize=require('../util/database');
 
 exports.AddMessage = async (req, res, next) => {
-  const t=Sequelize.transaction()
+  const t = Sequelize.transaction();
   try {
     const Message = req.body.Message;
     const Id = req.user.id;
-    const Gid = req.body.groupId
-    //console.log(`ihafdoiha0wfh0awjf-----${Gid}`)
+    const Gid = req.body.groupId;
 
     const response = await Messages.create({
       content: Message,
       UserId: Id,
       GroupId: Gid,
     });
+
+    // Emit the message through socket.io
+    req.app.get('io').to(Gid).emit('receive-message', {
+      content: Message,
+      User: { 
+        name: req.user.name
+      },
+      GroupId: Gid
+    });
+
     res.status(201).json({ response, message: "Sent successfully" });
   } catch (err) {
     console.log(err);

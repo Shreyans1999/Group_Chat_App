@@ -13,6 +13,16 @@ const Cors=require("cors");
 const path=require('path');
 const helmet=require('helmet');
 const bodyParser = require("body-parser");
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use(bodyParser.json({ extended: false }));
 app.use(helmet({contentSecurityPolicy: false}));
 app.use(Cors())
@@ -54,6 +64,39 @@ sq.sync({ force: true })
         console.error("Error synchronizing database:", err);
     });
 
-app.listen(4000, () => {
-    console.log("Server is running on port 4000");
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('join-group', (groupId) => {
+    socket.join(groupId);
+    console.log(`User joined group: ${groupId}`);
+  });
+
+  socket.on('leave-group', (groupId) => {
+    socket.leave(groupId);
+    console.log(`User left group: ${groupId}`);
+  });
+
+  socket.on('send-message', async (messageData) => {
+    io.to(messageData.groupId).emit('receive-message', messageData);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
+// Make io accessible to other parts of the application
+app.set('io', io);
+
+// Change app.listen to server.listen
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+}).on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is already in use. Trying ${PORT + 1}`);
+    server.listen(PORT + 1);
+  }
 });
