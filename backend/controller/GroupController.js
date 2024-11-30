@@ -22,26 +22,30 @@ exports.CreateGroup = async (req, res, next) => {
         name: GroupName,
         UserId: Uid,
       },
-      { transaction: t }
     );
+    const GroupId = await Groups.findOne({ where: { name: GroupName } });
+    console.log(`GroupId is -----------${GroupId.id}`);
     await Members.create(
       {
         name: req.user.name,
-        GroupId: req.user.id,
+        GroupId: GroupId.id,
         IsAdmin: true,
       },
-      { transaction: t }
+      
     );
     await Admin.create(
       {
         name: req.user.name,
-        GroupId: req.user.id,
+        GroupId: GroupId.id,
       },
-      { transaction: t }
+      
     );
-    await User.update({ IsAdmin: true }, { where: { id: Uid } });
+    await User.update(
+      { IsAdmin: true },
+      { where: { id: Uid } }
+    );
 
-    await t.commit();
+ 
     res.status(201).json({
       group,
       success: true,
@@ -49,7 +53,7 @@ exports.CreateGroup = async (req, res, next) => {
       token: generateAccessToken(Uid, true),
     });
   } catch (err) {
-    await t.rollback();
+    
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -73,7 +77,10 @@ exports.getGroupList = (req, res, next) => {
 exports.ShowMembers = async (req, res, next) => {
   const gid = await Admin.findOne({ where: { name: req.user.name } });
   console.log(gid);
-  if (gid.id) {
+
+  if (gid == null) {
+    res.status(200).json({ message: "Add group to show members" });
+  } else {
     const peopeles = await Members.findAll({
       where: { GroupId: gid.id, IsAdmin: null },
     });
@@ -83,7 +90,7 @@ exports.ShowMembers = async (req, res, next) => {
 };
 
 exports.RemoveUser = async (req, res, next) => {
-  const t=sq.transaction();
+  const t = sq.transaction();
   const Mid = req.params.id;
   console.log(`members id are ------------------${Mid}`);
   await Members.destroy({ where: { id: Mid } });
@@ -91,26 +98,39 @@ exports.RemoveUser = async (req, res, next) => {
 };
 
 exports.MakeAdmin = async (req, res, next) => {
-  const t=sq.transaction()
- try{
-  const Mid = req.params.id;
-  await Members.update({ IsAdmin: true }, { where: { id: Mid } },{transaction:t});
-  await User.update({ IsAdmin: true }, { where: { id: Mid } },{transaction:t});
-  const gid = await Members.findOne({
-    where: { id: Mid },
-    attributes: ["GroupId"],
-  },{transaction:t});
+  const t = await sq.transaction();
+  try {
+    const Mid = req.params.id;
+    await Members.update(
+      { IsAdmin: true },
+      { where: { id: Mid } },
+      { transaction: t }
+    );
+    await User.update(
+      { IsAdmin: true },
+      { where: { id: Mid } },
+      { transaction: t }
+    );
+    const gid = await Members.findOne(
+      {
+        where: { id: Mid },
+        attributes: ["GroupId"],
+      },
+      { transaction: t }
+    );
 
-  await Admin.create({
-    name: req.params.name,
-    GroupId: gid.GroupId,
-  },{transaction:t});
-   await t.commit()
-  res.status(201).json({ message: "Admin made successfully" });
- }
- catch(err){
-  (await t).rollback()
-  console.log(err)
-  res.status(500).json({message:"something went wrong"});
- }
+    await Admin.create(
+      {
+        name: req.params.name,
+        GroupId: gid.GroupId,
+      },
+      { transaction: t }
+    );
+    await t.commit();
+    res.status(201).json({ message: "Admin made successfully" });
+  } catch (err) {
+    (await t).rollback()
+    console.log(err);
+    res.status(500).json({ message: "something went wrong" });
+  }
 };

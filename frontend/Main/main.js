@@ -30,6 +30,7 @@ function showMembers(peeps) {
   });
 
   Btn2.addEventListener("click", function MakeAdmin() {
+    
     const token = localStorage.getItem("token");
     console.log(Child.name)
     const Admin = {
@@ -42,6 +43,8 @@ function showMembers(peeps) {
       .then(() => {
         alert("Admin made successfully");
         location.reload();
+      }).catch(err=>{
+        console.log(err)
       });
   });
 }

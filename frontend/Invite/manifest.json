@@ -1,0 +1,21 @@
+{
+  "name": "Q Peeps",
+  "short_name": "Qpeeps",
+  "description": "A chat application that allows users to communicate in real-time.",
+  "icons": [
+    {
+      "src": "/Q_logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/Q_logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/invite.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}
