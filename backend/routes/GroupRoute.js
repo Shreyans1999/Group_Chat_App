@@ -8,6 +8,10 @@ Router.post('/createGroup',UserAuthenticatior.authenticator,GroupController.Crea
 
 Router.get("/getGroupList",UserAuthenticatior.authenticator,GroupController.getGroupList);
 
+Router.get('/showMembers',UserAuthenticatior.authenticator,GroupController.ShowMembers);
 
+Router.delete('/RemoveMember/:id',GroupController.RemoveUser);
+
+Router.post('/MakeAdmin/:id/:name',UserAuthenticatior.authenticator,GroupController.MakeAdmin);
 
 module.exports=Router

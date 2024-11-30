@@ -11,6 +11,7 @@ create.addEventListener("click", function () {
     })
     .then((response) => {
       console.log(response);
+      localStorage.setItem("token",response.data.token)
       window.location.href = "../Main/main.html";
     })
     .catch((err) => {

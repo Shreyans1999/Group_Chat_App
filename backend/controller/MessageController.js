@@ -3,13 +3,15 @@ const Messages = require("../models/message");
 const Group = require("../models/Group");
 const { response } = require("express");
 const sq = require("sequelize");
+const Sequelize=require('../util/database');
 
 exports.AddMessage = async (req, res, next) => {
+  const t=Sequelize.transaction()
   try {
     const Message = req.body.Message;
     const Id = req.user.id;
     const Gid = req.body.groupId
-    console.log(`ihafdoiha0wfh0awjf-----${Gid}`)
+    //console.log(`ihafdoiha0wfh0awjf-----${Gid}`)
 
     const response = await Messages.create({
       content: Message,

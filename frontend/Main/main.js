@@ -1,11 +1,77 @@
 const SendButton = document.getElementById("Send");
 
+function showMembers(peeps) {
+  const UserDiv = document.getElementById("user");
+  const Child = document.createElement("span");
+  Child.textContent = `${peeps.name}  `;
+  Child.id = `${peeps.id}`;
+  console.log(Child.id);
+  Child.name = `${peeps.name}`;
+  const Btn1 = document.createElement("button");
+  Btn1.textContent = "RemoveUser";
+  Btn1.style.margin = "3px";
+  Btn1.style.color = "Red";
+
+  const Btn2 = document.createElement("button");
+  Btn2.textContent = "MakeAdmin";
+  Btn2.style.margin = "3px";
+  Btn2.style.color = "Green";
+
+  Child.appendChild(Btn1);
+  Child.appendChild(Btn2);
+  UserDiv.appendChild(Child);
+
+  Btn1.addEventListener("click", function removeUser() {
+    console.log(Child.id);
+    axios.delete(`http://localhost:4000/RemoveMember/${Child.id}`).then(() => {
+      alert("user removed from group");
+      location.reload();
+    });
+  });
+
+  Btn2.addEventListener("click", function MakeAdmin() {
+    const token = localStorage.getItem("token");
+    console.log(Child.name)
+    const Admin = {
+      status: true,
+    };
+    axios
+      .post(`http://localhost:4000/MakeAdmin/${Child.id}/${Child.name}`, Admin, {
+        headers: { Authorisation: token },
+      })
+      .then(() => {
+        alert("Admin made successfully");
+        location.reload();
+      });
+  });
+}
+
 window.addEventListener("DOMContentLoaded", function () {
   const token = localStorage.getItem("token");
+  const decodedToken = parseJwt(token);
+  console.log(decodedToken);
+
+  axios
+    .get("http://localhost:4000/showMembers", {
+      headers: { Authorisation: token },
+    })
+    .then((Response) => {
+      console.log(Response);
+      if (decodedToken.admin) {
+        for (var i = 0; i < Response.data.peopeles.length; i++) {
+          showMembers(Response.data.peopeles[i]);
+        }
+      }
+    });
+
+  // Retrieve and display the group name from local storage
+  const groupName = localStorage.getItem("GroupName");
+  if (groupName) {
+    ShowGroupName(groupName);
+  }
 
   setInterval(() => {
     const groupId = localStorage.getItem("Gid");
-    if (!groupId) return; // Exit if no group is selected
 
     axios
       .get(`http://localhost:4000/get-message?groupId=${groupId}`, {
@@ -58,7 +124,7 @@ window.addEventListener("DOMContentLoaded", function () {
         const TempList = document.createElement("div");
         TempList.innerHTML = "";
         response2.data.name.forEach((group) => {
-          TempList.innerHTML += `<li><button onClick="handleGrpNameClick(this.id)" id="${group.id}"> ${group.name}</button> </li>`;
+          TempList.innerHTML += `<li><button onClick="handleGrpNameClick(this.id, '${group.name}')" id="${group.id}"> ${group.name}</button> </li>`;
         });
 
         if (Grouplist.innerHTML !== TempList.innerHTML) {
@@ -104,19 +170,21 @@ CreateGroup.addEventListener("click", function () {
 function ShowGroupName(Group) {
   const GName = document.getElementById("groupName");
   GName.textContent = `${Group}`;
+  // Store the group name in local storage
+  localStorage.setItem("GroupName", Group);
 }
 
-function handleGrpNameClick(id) {
+function handleGrpNameClick(id, groupName) {
   localStorage.removeItem("Messages");
   localStorage.setItem("Gid", id);
+  ShowGroupName(groupName); // Call ShowGroupName immediately after setting the group ID
 }
 
-const Invite=document.getElementById("InviteUser");
+const Invite = document.getElementById("InviteUser");
 
-Invite.addEventListener("click",function(){
-  window.location.href="../Invite/invite.html"
+Invite.addEventListener("click", function () {
+  window.location.href = "../Invite/invite.html";
 });
-
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];

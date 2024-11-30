@@ -13,9 +13,5 @@ const Groups=sq.define("Group",{
         type:Sequelize.STRING,
         allowNull:false 
       },
-      admin:{
-        type:Sequelize.STRING,
-        allowNull:false,
-      }
 })
 module.exports=Groups;

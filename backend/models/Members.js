@@ -1,19 +1,21 @@
 const { Sequelize } = require("sequelize");
 
-const sq=require("../util/database");
+const sq = require("../util/database");
 
-const Member=sq.define("Members",{
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-      },
-      name:{
-        type:Sequelize.STRING,
-        allowNull:false 
-      },
-      
+const Member = sq.define("Members", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  IsAdmin: {
+    type: Sequelize.BOOLEAN,
+  },
 });
 
-module.exports=Member
+module.exports = Member;
