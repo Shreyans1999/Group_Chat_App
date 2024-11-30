@@ -153,15 +153,28 @@ function handleGrpNameClick(id, groupName) {
 }
 
 function ShowMessages(message) {
-  if (!message.User || !message.User.name || !message.content) return;
+  if (!message.User || !message.User.name) return;
   
   const MessageDiv = document.getElementById("message");
   const Li = document.createElement("li");
   Li.classList.add("mb-2", "p-2", "bg-gray-50", "rounded");
-  Li.textContent = `${message.User.name}: ${message.content}`;
+
+  if (message.type === 'image') {
+    const img = document.createElement('img');
+    img.src = message.content;
+    img.classList.add('max-w-xs', 'rounded');
+    Li.appendChild(img);
+  } else if (message.type === 'video') {
+    const video = document.createElement('video');
+    video.src = message.content;
+    video.controls = true;
+    video.classList.add('max-w-xs', 'rounded');
+    Li.appendChild(video);
+  } else {
+    Li.textContent = `${message.User.name}: ${message.content}`;
+  }
+
   MessageDiv.appendChild(Li);
-  
-  // Auto-scroll to the latest message
   MessageDiv.scrollTop = MessageDiv.scrollHeight;
 }
 
@@ -219,3 +232,46 @@ function getGroupList() {
   })
   .catch(err => console.log(err));
 }
+
+// Add after socket initialization
+const attachMediaButton = document.getElementById('attachMedia');
+const mediaInput = document.getElementById('mediaInput');
+
+attachMediaButton.addEventListener('click', () => {
+  mediaInput.click();
+});
+
+mediaInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const mediaData = e.target.result;
+    const mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+    
+    // Emit media message through socket
+    socket.emit('send-message', {
+      content: mediaData,
+      type: mediaType,
+      User: { 
+        name: localStorage.getItem("username")
+      },
+      groupId: localStorage.getItem("Gid")
+    });
+
+    // Send to backend
+    const formData = new FormData();
+    formData.append('media', file);
+    formData.append('groupId', localStorage.getItem("Gid"));
+    formData.append('type', mediaType);
+
+    axios.post("http://localhost:4000/add-media-message", formData, {
+      headers: { 
+        'Authorisation': localStorage.getItem("token"),
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  };
+  reader.readAsDataURL(file);
+});

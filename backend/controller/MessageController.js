@@ -70,3 +70,33 @@ console.log(`mesdawefawfa----${messageId}`)
       res.status(500).json({ message: "something went wrong" });
     });
 };
+
+exports.AddMediaMessage = async (req, res, next) => {
+  try {
+    const mediaFile = req.file;
+    const groupId = req.body.groupId;
+    const mediaType = req.body.type;
+    const mediaData = mediaFile.buffer.toString('base64');
+
+    const response = await Messages.create({
+      content: mediaData,
+      type: mediaType,
+      UserId: req.user.id,
+      GroupId: groupId,
+    });
+
+    req.app.get('io').to(groupId).emit('receive-message', {
+      content: `data:${mediaFile.mimetype};base64,${mediaData}`,
+      type: mediaType,
+      User: { 
+        name: req.user.name
+      },
+      GroupId: groupId
+    });
+
+    res.status(201).json({ response, message: "Media sent successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
